@@ -1,8 +1,8 @@
 package jm.task.core.jdbc.dao;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,10 +10,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDaoJDBCImpl extends Util implements UserDao {
-    private final Connection connection = (Connection) getConnection();
+public class UserDaoJDBCImpl implements UserDao {
+    private  static  final Logger logger = Logger.getLogger(UserDaoJDBCImpl.class.getName());
+    private final Connection connection = Util.getConnection();
     public UserDaoJDBCImpl() {
-
+        //this is an empty constructor
     }
 
     public void createUsersTable() {
@@ -21,7 +22,7 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
         try(Statement statement = connection.createStatement()){
             statement.executeUpdate(newSqlTable);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
@@ -30,7 +31,7 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
         try (Statement statement = connection.createStatement()){
             statement.executeUpdate(deleteTable);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
@@ -38,9 +39,9 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
         String newUser = "INSERT Users (name, lastName, age) VALUES (" + "\'" + name + "\'" + "," + "\'"+ lastName +"\'" + "," + age + ")";
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(newUser);
-            System.out.println("User с именем - " + name + " добавлен в базу данных");
+            logger.log(Level.INFO,"User с именем -  {0}  добавлен в базу данных", name);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+           logger.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
@@ -49,7 +50,7 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(deleteUser);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
@@ -67,9 +68,9 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
                 userlist.add(user);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
-        System.out.println(userlist);
+        logger.log(Level.INFO,"All users {0} ", userlist);
         return userlist;
 
     }
@@ -79,7 +80,7 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
         try (Statement statement = connection.createStatement()){
             statement.executeUpdate(cleanTable);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
 
 
